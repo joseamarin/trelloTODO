@@ -1,1 +1,61 @@
 /* CURRENTLY IN: styles/main.css */
+
+.ui.attached.stackable.menu {
+    background: #026aa7;
+}
+
+.trello-logo {
+    background-image: url(https://a.trellocdn.com/dist/images/header-logo-2x.01ef898811a879595cea.png);
+    background-position: 100% 0;
+    background-repeat: no-repeat;
+    background-size: 80px 30px;
+    height: 30px;
+    top: 0;
+    right: 0;
+    width: 80px;
+}
+
+.todo--white {
+    color: white !important;
+    font-family: cursive;
+}
+
+.column {
+    border: 1px solid black;
+}
+
+#app .board-header {
+    margin-top: 10px;
+}
+
+.board-list {
+    list-style: none;
+}
+
+.board-list-item {
+    box-sizing: border-box;
+    padding: 0 8px 8px 0;
+}
+
+.board-tile {
+    background-color: rgb(0, 121, 191);
+    background-size: cover;
+    color: #fff;
+    line-height: 20px;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    display: block;
+}
+
+.board-tile-fade {
+    background-color: rgba(0,0,0,.15);
+    display: block;
+}
+
+.board-tile-details {
+    display: block;
+    min-height: 64px;
+    padding-bottom: 16px;
+    padding-right: 40px;
+}
