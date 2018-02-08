@@ -2,14 +2,15 @@
 
 (function() {
 
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-	const token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // token expires daily TODO automate token generation somehow?
+    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+	const token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // token expires daily TODO automate token generation somehow?
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; 
+    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; 
     const getTokenBtn = document.querySelector('.js-get-token');
+    const modal = document.querySelector('.ui.modal');
 
 
     const getToken = (url) => {
@@ -46,12 +47,32 @@
         });
     };
 
+    const tokenModal = () => {
+        getTokenBtn.addEventListener('click', () => {
+            modal.classList.add('ui', 'modal');
+        });
+        const body = document.querySelector('body');
+        const modalContainer = document.querySelector('.modal-container');
+        body.classList.add('dimmable', 'dimmed');
+        modalContainer.classList.add('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
+        modal.classList.add('active', 'mini');
+        body.addEventListener('keydown', (e) => {
+            if (e.keyCode ===  27) {
+                modalContainer.classList.remove('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
+                modal.classList.remove('active');
+            }; 
+        });
+    };
+
     // authorize a web client using the GET route: https://trello.com/1/authorize
     // for now users need to copy their token manually 
     getTokenBtn.addEventListener('click', () => {
         makeGETEndpoint('authorize').then((e) => {
-            alert('A new tab will open, copy the access token then come back here =)');
+            alert('A new tab will open, copy the access token then paste it here');
             window.open(e);
+            tokenModal();
+            // $('.ui.modal')
+            //     .modal('show');
         });
     });
 
@@ -132,13 +153,13 @@
         });
     };
 
-    makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
-        makeCard(data).then((card) => {
-            POST(card).then((card) => {
-            }).catch((e) => {
-                console.log(e);
-            }); 
-        });
-    });
+    // makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
+    //     makeCard(data).then((card) => {
+    //         POST(card).then((card) => {
+    //         }).catch((e) => {
+    //             console.log(e);
+    //         }); 
+    //     });
+    // });
     
 })();
