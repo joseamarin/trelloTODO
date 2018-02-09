@@ -2,16 +2,20 @@
 
 (function() {
 
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-	const token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // token expires daily TODO automate token generation somehow?
+    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+	const token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // token expires daily TODO automate token generation somehow?
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; 
+    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
+    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; 
     const getTokenBtn = document.querySelector('.js-get-token');
+    const modalContainer = document.querySelector('.modal-container');
     const modal = document.querySelector('.ui.modal');
-
+	const input = document.querySelector('.js-token-input');
+    const storage = window.localStorage;
+    const boardContainer = document.querySelector('.grid-container');
+    input.value = '';
 
     const getToken = (url) => {
         return new Promise((resolve, reject) => {
@@ -52,7 +56,6 @@
             modal.classList.add('ui', 'modal');
         });
         const body = document.querySelector('body');
-        const modalContainer = document.querySelector('.modal-container');
         body.classList.add('dimmable', 'dimmed');
         modalContainer.classList.add('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
         modal.classList.add('active', 'mini');
@@ -62,7 +65,22 @@
                 modal.classList.remove('active');
             }; 
         });
+        input.addEventListener('keydown', (e) => {
+            if (e.keyCode === 13) validateToken();  
+        });
     };
+
+	const validateToken = () => {
+        let userToken = '';
+		if (input.value.trim() === "") {
+			alert('Please input a value!');
+			return;
+		};
+        userToken = input.value;
+        storage.setItem('trello_token', userToken);
+        modalContainer.classList.remove('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
+        modal.classList.remove('active');
+	};
 
     // authorize a web client using the GET route: https://trello.com/1/authorize
     // for now users need to copy their token manually 
@@ -116,6 +134,16 @@
             console.log(e); 
         });
     });
+
+    const displayCardName = () => {
+        return new Promise((resolve, reject) => {
+            makeGETEndpoint('member', 'me', 'boards').then((data) => {
+                GET(data).then((data) => {
+                    console.log(data[1].name)
+                });
+            });
+        }); 
+    };
 
     //  TODO add replace functionality for url ASCII symbols e.g. : // 
     const makePostData = (name, idList, desc, pos, due, url, keepFromSource = 'all') => {
