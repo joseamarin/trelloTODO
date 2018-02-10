@@ -25,21 +25,25 @@
     font-family: cursive;
 }
 
-.column {
-    border: 1px solid black;
+.outline {
+    color: #999;
 }
 
 #app .board-header {
     margin-top: 10px;
 }
 
+#app a {
+    color: white;
+}
+
 .board-list {
     list-style: none;
+    padding: 0;
 }
 
 .board-list-item {
     box-sizing: border-box;
-    padding: 0 8px 8px 0;
 }
 
 .board-tile {

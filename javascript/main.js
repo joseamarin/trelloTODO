@@ -2,19 +2,18 @@
 
 (function() {
 
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-	const token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; // token expires daily TODO automate token generation somehow?
+    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX';
-    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'; 
+    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
+    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXX'; 
     const getTokenBtn = document.querySelector('.js-get-token');
     const modalContainer = document.querySelector('.modal-container');
     const modal = document.querySelector('.ui.modal');
 	const input = document.querySelector('.js-token-input');
     const storage = window.localStorage;
-    const boardContainer = document.querySelector('.grid-container');
+    const boardContainer = document.querySelector('.js-boards');
     input.value = '';
 
     const getToken = (url) => {
@@ -37,13 +36,12 @@
             for (let i = 0; i < args.length; i++) {
                 endpoint += `/${args[i]}`;
             };
-            let route = `${baseURL}/${version}${endpoint}?key=${key}&token=${token}`;
+            let route = `${baseURL}/${version}${endpoint}?key=${key}&token=${storage.getItem('trello_token')}`;
             if (endpoint === '/authorize') {
                 const name = 'trelloTodo';
                 const responseType = 'token';
                 const scope = 'read,write';
                 route = `${url}/${version}${endpoint}?&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;   
-
                 getToken(route).then((endpoint) => {
                 });
             };
@@ -80,6 +78,7 @@
         storage.setItem('trello_token', userToken);
         modalContainer.classList.remove('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
         modal.classList.remove('active');
+        location.reload(); // temp using a page reload
 	};
 
     // authorize a web client using the GET route: https://trello.com/1/authorize
@@ -128,18 +127,42 @@
 	};
 
     makeGETEndpoint('lists', listId, 'cards').then((data) => {
-        GET(data).then((data) => {
-            console.log(data) 
-        }).catch((e) => {
-            console.log(e); 
-        });
+        if ('localStorage' in window && window['localStorage'] !== null) {
+            GET(data).then((data) => {
+                console.log(data) 
+                displayBoard(data).then((data) => {
+                }); 
+            });
+        };
     });
 
-    const displayCardName = () => {
+    const makeEl = elName => {return document.createElement(elName);};
+
+    const displayBoard = () => {
         return new Promise((resolve, reject) => {
-            makeGETEndpoint('member', 'me', 'boards').then((data) => {
-                GET(data).then((data) => {
-                    console.log(data[1].name)
+            makeGETEndpoint('member', 'me', 'boards').then((boards) => {
+                GET(boards).then((boards) => {
+                    boards.forEach((boardName) => {
+                        const div = makeEl('div');
+                        const list = makeEl('ul');
+                        const listItem = makeEl('li');
+                        const boardTile = makeEl('a');
+                        const boardTileFade = makeEl('span');
+                        const boardTileFadeDetails = makeEl('span');
+                        div.classList.add('column');
+                        list.classList.add('board-list');
+                        listItem.classList.add('board-list-item');
+                        boardTile.classList.add('board-tile');
+                        boardTileFade.classList.add('board-tile-fade');
+                        boardTileFadeDetails.classList.add('board-tile-fade-details');
+                        boardContainer.appendChild(div);
+                        div.appendChild(list);
+                        list.appendChild(listItem);
+                        listItem.appendChild(boardTile);
+                        boardTile.appendChild(boardTileFade);
+                        boardTile.appendChild(boardTileFadeDetails);
+                        boardTileFadeDetails.innerHTML = `<span>${boardName.name}</span>`;
+                    });
                 });
             });
         }); 
