@@ -29,12 +29,19 @@
     color: #999;
 }
 
+#app .icon {
+    font-size: 30px;
+    padding: 0;
+}
+
 #app .board-header {
     margin-top: 10px;
 }
 
 #app a {
     color: white;
+    display: flex;
+    justify-content: center;
 }
 
 .board-list {
@@ -55,11 +62,18 @@
     text-decoration: none;
     border-radius: 3px;
     display: block;
+    min-height: 100px;
+    font-weight: 700;
+    font-size: 17px;
+}
+
+.board-tile:hover {
+    background-color: rgb(0, 90, 191);
 }
 
 .board-tile-fade {
-    background-color: rgba(0,0,0,.15);
     display: block;
+    background-color: rgba(0,0,0,.15);
 }
 
 .board-tile-details {
@@ -67,4 +81,25 @@
     min-height: 64px;
     padding-bottom: 16px;
     padding-right: 40px;
+}
+
+.member {
+    background-color: #d6dadc;
+    color: #4d4d4d;
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    text-decoration: none;
+    text-align: center;
+    font-weight: 700;
+}
+
+.member-initials {
+    font-size: 12px;
+    height: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }

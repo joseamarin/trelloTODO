@@ -2,16 +2,16 @@
 
 (function() {
 
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
+    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXX';
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
-    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXXX'; 
+    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXX';
+    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXX'; 
     const getTokenBtn = document.querySelector('.js-get-token');
     const modalContainer = document.querySelector('.modal-container');
     const modal = document.querySelector('.ui.modal');
-	const input = document.querySelector('.js-token-input');
+    const input = document.querySelector('.js-token-input');
     const storage = window.localStorage;
     const boardContainer = document.querySelector('.js-boards');
     input.value = '';
@@ -20,13 +20,13 @@
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest(); 
             xhr.open('GET', url);
-			xhr.onload = () => {
-				resolve(xhr.responseText);
-			}; 
-			xhr.onerror = (err) => {
-				reject(err);
-			};
-			xhr.send();
+            xhr.onload = () => {
+                resolve(xhr.responseText);
+            }; 
+            xhr.onerror = (err) => {
+                reject(err);
+            };
+            xhr.send();
         }); 
     };
 
@@ -68,18 +68,18 @@
         });
     };
 
-	const validateToken = () => {
+    const validateToken = () => {
         let userToken = '';
-		if (input.value.trim() === "") {
-			alert('Please input a value!');
-			return;
-		};
+        if (input.value.trim() === "") {
+            alert('Please input a value!');
+            return;
+        };
         userToken = input.value;
         storage.setItem('trello_token', userToken);
         modalContainer.classList.remove('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
         modal.classList.remove('active');
         location.reload(); // temp using a page reload
-	};
+    };
 
     // authorize a web client using the GET route: https://trello.com/1/authorize
     // for now users need to copy their token manually 
@@ -96,35 +96,35 @@
     const GET = (url) => {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-			xhr.onreadystatechange = () => {
-				const isReqReady = xhr.readyState === XMLHttpRequest.DONE;
-				const isReqDone = xhr.status === 200;
+            xhr.onreadystatechange = () => {
+                const isReqReady = xhr.readyState === XMLHttpRequest.DONE;
+                const isReqDone = xhr.status === 200;
 
-				if (isReqReady && isReqDone) {
-					resolve(JSON.parse(xhr.responseText));
-				};
-			};
+                if (isReqReady && isReqDone) {
+                    resolve(JSON.parse(xhr.responseText));
+                };
+            };
             xhr.open('GET', url)
             xhr.send();
         }); 
     }; 
 
-	const POST = (url, data) => {
-    	return new Promise((resolve, reject) => {
-		    const xhr = new XMLHttpRequest();
-			xhr.open('POST', url);
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			xhr.onload = () => {
+    const POST = (url, data) => {
+        return new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onload = () => {
                 console.log(xhr.responseText)
-				const data = JSON.parse(xhr.responseText);
-				resolve(data)
-			}; 
-			xhr.onerror = (err) => {
-				reject(err)
-			};
-			xhr.send(JSON.stringify(data));
-		});
-	};
+                const data = JSON.parse(xhr.responseText);
+                resolve(data)
+            }; 
+            xhr.onerror = (err) => {
+                reject(err)
+            };
+            xhr.send(JSON.stringify(data));
+        });
+    };
 
     makeGETEndpoint('lists', listId, 'cards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
@@ -167,6 +167,29 @@
             });
         }); 
     };
+
+    const displayMember = (userObj) => {
+        return new Promise((resolve, reject) => {
+            const header = document.querySelector('.js-header');  
+            const anchor = makeEl('a');
+            const member = makeEl('span'); 
+            anchor.classList.add('item');
+            member.classList.add('member');
+            header.appendChild(anchor);
+            anchor.appendChild(member);
+            anchor.setAttribute('title', `${userObj.fullName} ${(userObj.username)}`);
+            member.innerHTML = `<span class="member-initials">${userObj.initials}</span>`;
+        }); 
+    };
+
+    makeGETEndpoint('member', 'me').then((userData) => {
+        GET(userData).then((userData) => {
+            console.log(userData)
+            displayMember(userData).then((userData) => {
+             
+            }); 
+        }); 
+    });
 
     //  TODO add replace functionality for url ASCII symbols e.g. : // 
     const makePostData = (name, idList, desc, pos, due, url, keepFromSource = 'all') => {
@@ -212,5 +235,5 @@
     //         }); 
     //     });
     // });
-    
+
 })();
