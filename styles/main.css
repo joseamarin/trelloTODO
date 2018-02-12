@@ -47,6 +47,10 @@
     color: #f3f3f3;
 }
 
+.icon-box:hover {
+    background: hsla(0,0%,90%,.3);
+}
+
 #app .board-header {
     margin-top: 10px;
 }
@@ -65,7 +69,6 @@
 @media (max-width: 767px) {
     #app a:nth-child(5) {
         position: relative;
-        right: 0;
     }
 }
 

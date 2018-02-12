@@ -40,7 +40,8 @@
                 const name = 'trelloTodo';
                 const responseType = 'token';
                 const scope = 'read,write';
-                route = `${url}/${version}${endpoint}?&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;   
+                const expiration = 'never';
+                route = `${url}/${version}${endpoint}?expiration=${expiration}&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;   
                 getToken(route).then((endpoint) => {
                 });
             };
@@ -128,7 +129,7 @@
     makeGETEndpoint('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
             GET(data).then((data) => {
-                console.log(data) 
+                console.log(data)
                 displayBoard(data).then((data) => {
                 }); 
             });
@@ -185,7 +186,6 @@
         GET(userData).then((userData) => {
             console.log(userData)
             displayMember(userData).then((userData) => {
-             
             }); 
         }); 
     });
@@ -221,7 +221,7 @@
                 route += `&${keys[counter]}=${data[prop]}`;
                 counter ++;
             };
-            route += `&key=${key}&token=${token}`;
+            route += `&key=${key}&token=${storage.getItem('trello_token')}`;
             resolve(route);
         });
     };
@@ -234,5 +234,42 @@
     //         }); 
     //     });
     // });
+
+    const makeBoardData = (name, prefs_background = 'red') => {
+        return new Promise((resolve, reject) => {
+            if (!name) throw new Error('This is a required parameter!');
+            const board = { name, prefs_background }; 
+            for (prop in board) {
+                if (typeof board[prop] === 'undefined') delete board[prop];
+                if (!board[prop]) break; 
+                board[prop] = board[prop].replace(/ /g, '%20');
+            };
+            resolve(board);
+        }); 
+    };
+
+    const  makeBoard = (data) => {
+        return new Promise((resolve, reject) => {
+            let route = `${baseURL}/${version}/boards?`;
+            const keys = Object.keys(data);
+            let counter = 0;
+            for (prop in data) {
+                route += `&${keys[counter]}=${data[prop]}`;
+                counter ++;
+            };
+            route += `&key=${key}&token=${storage.getItem('trello_token')}`;
+            resolve(route);
+        });
+    };
+
+    addBoardBtn.addEventListener('click', (e) => { 
+        makeBoardData('trelloTODO3').then((data) => {
+            makeBoard(data).then((newBoard) => {
+                POST(newBoard).then((newBoard) => {
+                    console.log(newBoard); 
+                }); 
+            });
+        });
+    }); 
 
 })();
