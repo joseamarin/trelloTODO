@@ -2,18 +2,17 @@
 
 (function() {
 
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXX';
+    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const boardId = 'XXXXXXXXXXXXXXXXXXXXXXXXX';
-    const listId = 'XXXXXXXXXXXXXXXXXXXXXXXXX'; 
     const getTokenBtn = document.querySelector('.js-get-token');
     const modalContainer = document.querySelector('.modal-container');
     const modal = document.querySelector('.ui.modal');
     const input = document.querySelector('.js-token-input');
     const storage = window.localStorage;
     const boardContainer = document.querySelector('.js-boards');
+    const addBoardBtn = document.querySelector('.js-add-board');
     input.value = '';
 
     const getToken = (url) => {
@@ -126,7 +125,7 @@
         });
     };
 
-    makeGETEndpoint('lists', listId, 'cards').then((data) => {
+    makeGETEndpoint('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
             GET(data).then((data) => {
                 console.log(data) 
@@ -136,7 +135,7 @@
         };
     });
 
-    const makeEl = elName => {return document.createElement(elName);};
+    const makeEl = elName => { return document.createElement(elName) };
 
     const displayBoard = () => {
         return new Promise((resolve, reject) => {

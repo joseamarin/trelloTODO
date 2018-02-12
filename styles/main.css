@@ -29,9 +29,22 @@
     color: #999;
 }
 
-#app .icon {
-    font-size: 30px;
+#app .custom-icons .icon {
+    font-size: 16px;
     padding: 0;
+    margin: 0;
+    color: #fff;
+}
+
+.icon-box {
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 3px;
+    background: hsla(0,0%,100%,.3);
+    color: #f3f3f3;
 }
 
 #app .board-header {
@@ -39,9 +52,21 @@
 }
 
 #app a {
-    color: white;
+    color: #f3f3f3;
     display: flex;
     justify-content: center;
+}
+
+#app a:nth-child(5) {
+    position: absolute;
+    right: 0;
+}
+
+@media (max-width: 767px) {
+    #app a:nth-child(5) {
+        position: relative;
+        right: 0;
+    }
 }
 
 .board-list {
@@ -69,6 +94,7 @@
 
 .board-tile:hover {
     background-color: rgb(0, 90, 191);
+    cursor: pointer;
 }
 
 .board-tile-fade {

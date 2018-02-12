@@ -10,18 +10,24 @@
 </head>
 <body id="app">
     <div class="ui borderless attached stackable small menu">
-        <div class="ui container js-header">
+        <div class="ui container custom-icons js-header">
             <a class="item todo--white">
                 <span class="trello-logo"></span> TODOS
             </a>
             <a class="item js-get-token" title="Get your user token">
-                <i class="protect icon"></i> 
+                <div class="icon-box">
+                    <i class="protect icon"></i>
+                </div>
             </a>
-            <a class="item" title="Add a trello todo board">
-                <i class="add square icon"></i>
+            <a class="item js-add-board" title="Add a trello todo board">
+                <div class="icon-box">
+                    <i class="plus icon"></i>
+                </div>
             </a>
             <a class="item">
-                <i class="info circle icon"></i>
+                <div class="icon-box">
+                    <i class="info icon"></i>
+                </div>
             </a>
         </div>
     </div>
@@ -45,9 +51,3 @@
     <script src='javascript/main.js'></script>
 </body>
 </html>
-
-<!--
-    <div class="ui input">
-        <input type="text" placeholder="Search...">
-    </div>
--->
