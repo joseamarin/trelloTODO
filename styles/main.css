@@ -4,6 +4,10 @@
     background: #026aa7;
 }
 
+.ui.vertical.masthead {
+    background: #026aa7;
+}
+
 .trello-logo {
     background-image: url(https://a.trellocdn.com/dist/images/header-logo-2x.01ef898811a879595cea.png);
     background-position: 100% 0;
@@ -132,3 +136,9 @@
     justify-content: center;
     align-items: center;
 }
+
+.ui.segment {
+    text-align: center;
+}
+
+

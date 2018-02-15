@@ -15,21 +15,7 @@
     const addBoardBtn = document.querySelector('.js-add-board');
     input.value = '';
 
-    const getToken = (url) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest(); 
-            xhr.open('GET', url);
-            xhr.onload = () => {
-                resolve(xhr.responseText);
-            }; 
-            xhr.onerror = (err) => {
-                reject(err);
-            };
-            xhr.send();
-        }); 
-    };
-
-    const makeGETEndpoint = (...args) => {
+    const makeApiRoute = (...args) => {
         return new Promise((resolve, reject) => {
             let endpoint = '';
             for (let i = 0; i < args.length; i++) {
@@ -42,7 +28,7 @@
                 const scope = 'read,write';
                 const expiration = 'never';
                 route = `${url}/${version}${endpoint}?expiration=${expiration}&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;   
-                getToken(route).then((endpoint) => {
+                ajax.GET(route).then((endpoint) => {
                 });
             };
             resolve(route);
@@ -84,7 +70,7 @@
     // authorize a web client using the GET route: https://trello.com/1/authorize
     // for now users need to copy their token manually 
     getTokenBtn.addEventListener('click', () => {
-        makeGETEndpoint('authorize').then((e) => {
+        makeApiRoute('authorize').then((e) => {
             alert('A new tab will open, copy the access token then paste it here');
             window.open(e);
             tokenModal();
@@ -93,44 +79,12 @@
         });
     });
 
-    const GET = (url) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = () => {
-                const isReqReady = xhr.readyState === XMLHttpRequest.DONE;
-                const isReqDone = xhr.status === 200;
 
-                if (isReqReady && isReqDone) {
-                    resolve(JSON.parse(xhr.responseText));
-                };
-            };
-            xhr.open('GET', url)
-            xhr.send();
-        }); 
-    }; 
-
-    const POST = (url, data) => {
-        return new Promise((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', url);
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = () => {
-                console.log(xhr.responseText)
-                const data = JSON.parse(xhr.responseText);
-                resolve(data)
-            }; 
-            xhr.onerror = (err) => {
-                reject(err)
-            };
-            xhr.send(JSON.stringify(data));
-        });
-    };
-
-    makeGETEndpoint('members', 'me', 'boards').then((data) => {
+    makeApiRoute('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
-            GET(data).then((data) => {
+            ajax.GET(data).then((data) => {
                 console.log(data)
-                displayBoard(data).then((data) => {
+                renderBoard(data).then((data) => {
                 }); 
             });
         };
@@ -138,10 +92,10 @@
 
     const makeEl = elName => { return document.createElement(elName) };
 
-    const displayBoard = () => {
+    const renderBoard = () => {
         return new Promise((resolve, reject) => {
-            makeGETEndpoint('member', 'me', 'boards').then((boards) => {
-                GET(boards).then((boards) => {
+            makeApiRoute('member', 'me', 'boards').then((boards) => {
+                ajax.GET(boards).then((boards) => {
                     boards.forEach((boardName) => {
                         const div = makeEl('div');
                         const list = makeEl('ul');
@@ -182,12 +136,12 @@
         }); 
     };
 
-    makeGETEndpoint('member', 'me').then((userData) => {
-        GET(userData).then((userData) => {
+    makeApiRoute('member', 'me').then((userData) => {
+        ajax.GET(userData).then((userData) => {
             console.log(userData)
             displayMember(userData).then((userData) => {
-            }); 
-        }); 
+            });
+        });
     });
 
     //  TODO add replace functionality for url ASCII symbols e.g. : // 
@@ -202,17 +156,17 @@
                 due,
                 url,
                 keepFromSource
-            }; 
+            };
             for (prop in card) {
                 if (typeof card[prop] === 'undefined') delete card[prop];
                 if (!card[prop]) break; 
                 card[prop] = card[prop].replace(/ /g, '%20');
             };
             resolve(card);
-        }); 
+        });
     };
 
-    const  makeCard = (data) => {
+    const makeCard = (data) => {
         return new Promise((resolve, reject) => {
             let route = `${baseURL}/${version}/cards?`;
             const keys = Object.keys(data);
@@ -226,15 +180,6 @@
         });
     };
 
-    // makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
-    //     makeCard(data).then((card) => {
-    //         POST(card).then((card) => {
-    //         }).catch((e) => {
-    //             console.log(e);
-    //         }); 
-    //     });
-    // });
-
     const makeBoardData = (name, prefs_background = 'red') => {
         return new Promise((resolve, reject) => {
             if (!name) throw new Error('This is a required parameter!');
@@ -245,10 +190,10 @@
                 board[prop] = board[prop].replace(/ /g, '%20');
             };
             resolve(board);
-        }); 
+        });
     };
 
-    const  makeBoard = (data) => {
+    const makeBoard = (data) => {
         return new Promise((resolve, reject) => {
             let route = `${baseURL}/${version}/boards?`;
             const keys = Object.keys(data);
@@ -263,13 +208,22 @@
     };
 
     addBoardBtn.addEventListener('click', (e) => { 
-        makeBoardData('trelloTODO3').then((data) => {
+        makeBoardData('trelloTODO4').then((data) => {
             makeBoard(data).then((newBoard) => {
-                POST(newBoard).then((newBoard) => {
+                ajax.POST(newBoard).then((newBoard) => {
                     console.log(newBoard); 
                 }); 
             });
         });
-    }); 
+    });
+
+    // makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
+    //     makeCard(data).then((card) => {
+    //         ajax.POST(card).then((card) => {
+    //         }).catch((e) => {
+    //             console.log(e);
+    //         }); 
+    //     });
+    // });
 
 })();
