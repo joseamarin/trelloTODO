@@ -11,14 +11,12 @@ window.router = (function() {
         const route = locationHash.toLowerCase();
 
         if (!window.localStorage.getItem('trello_token')) {
-            // Compose(Main);
             location.hash = '#/login';
-            Main.innerHTML = '';
-            views.renderLogin(); 
+            Main.innerHTML = views.renderLoginPage(); 
         }
-        else if (window.localStorage.getItem('trello_token') === true) {
-            // List(Main);
+        else if (window.localStorage.getItem('trello_token')) {
             location.hash = '#/boards';
+            Main.innerHTML = views.renderBoardsPage();
         }
 
     }, false);

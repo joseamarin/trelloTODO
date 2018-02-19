@@ -6,14 +6,10 @@
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
-    const getTokenBtn = document.querySelector('.js-get-token');
-    const modalContainer = document.querySelector('.modal-container');
-    const modal = document.querySelector('.ui.modal');
-    const input = document.querySelector('.js-token-input');
     const storage = window.localStorage;
-    const boardContainer = document.querySelector('.js-boards');
     const addBoardBtn = document.querySelector('.js-add-board');
-    input.value = '';
+
+    if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
 
     const makeApiRoute = (...args) => {
         return new Promise((resolve, reject) => {
@@ -35,7 +31,7 @@
         });
     };
 
-    const tokenModal = () => {
+    const tokenModal = (getTokenBtn, modalContainer, modal, input) => {
         getTokenBtn.addEventListener('click', () => {
             modal.classList.add('ui', 'modal');
         });
@@ -50,11 +46,11 @@
             }; 
         });
         input.addEventListener('keydown', (e) => {
-            if (e.keyCode === 13) validateToken();  
+            if (e.keyCode === 13) validateToken(modalContainer, modal, input);  
         });
     };
 
-    const validateToken = () => {
+    const validateToken = (modalContainer, modal, input) => {
         let userToken = '';
         if (input.value.trim() === "") {
             alert('Please input a value!');
@@ -67,18 +63,20 @@
         location.reload(); // temp using a page reload
     };
 
-    // authorize a web client using the GET route: https://trello.com/1/authorize
-    // for now users need to copy their token manually 
-    getTokenBtn.addEventListener('click', () => {
-        makeApiRoute('authorize').then((e) => {
-            alert('A new tab will open, copy the access token then paste it here');
-            window.open(e);
-            tokenModal();
-            // $('.ui.modal')
-            //     .modal('show');
-        });
-    });
-
+    document.querySelector('#app').addEventListener('click', event => {
+        if (event.target.classList.contains('js-get-token', 'js-token-input', 'modal-container', 'ui.modal')) {
+            const getTokenBtn = document.querySelector('.js-get-token');
+            const modalContainer = document.querySelector('.modal-container');
+            const modal = document.querySelector('.ui.modal');
+            const input = document.querySelector('.js-token-input');
+            input.value = '';
+            makeApiRoute('authorize').then((e) => {
+                alert('A new tab will open, copy the access token then paste it here');
+                window.open(e);
+                tokenModal(getTokenBtn, modalContainer, modal, input);
+            });
+        }
+    })
 
     makeApiRoute('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
@@ -97,6 +95,7 @@
             makeApiRoute('member', 'me', 'boards').then((boards) => {
                 ajax.GET(boards).then((boards) => {
                     boards.forEach((boardName) => {
+                        const boardContainer = document.querySelector('.js-boards');
                         const div = makeEl('div');
                         const list = makeEl('ul');
                         const listItem = makeEl('li');
@@ -207,15 +206,15 @@
         });
     };
 
-    addBoardBtn.addEventListener('click', (e) => { 
-        makeBoardData('trelloTODO4').then((data) => {
-            makeBoard(data).then((newBoard) => {
-                ajax.POST(newBoard).then((newBoard) => {
-                    console.log(newBoard); 
-                }); 
-            });
-        });
-    });
+    // addBoardBtn.addEventListener('click', (e) => { 
+    //     makeBoardData('trelloTODO4').then((data) => {
+    //         makeBoard(data).then((newBoard) => {
+    //             ajax.POST(newBoard).then((newBoard) => {
+    //                 console.log(newBoard); 
+    //             }); 
+    //         });
+    //     });
+    // });
 
     // makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
     //     makeCard(data).then((card) => {
