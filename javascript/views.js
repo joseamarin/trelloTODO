@@ -11,7 +11,6 @@ window.views = (function() {
         </div>
     </div>
 </div>
-
 <div class="ui equal width grid">
     <div class="column">
         <div class="ui segment">
@@ -34,7 +33,7 @@ Already a Trello member<i class="arrow left icon"></i>
     </div>
 </div>
 <div class="modal-container">
-    <div class="ui modal">
+    <div class="ui modal js-fade fade-in is-paused">
         <div class="header">Token please</div>
         <div class="ui fluid action input">
             <input type="text" placeholder="Enter Token..." class="js-token-input">
@@ -53,8 +52,8 @@ Already a Trello member<i class="arrow left icon"></i>
             <span class="trello-logo"></span> TODO
         </a>
         <a class="item js-add-board" title="Add a trello todo board">
-            <div class="icon-box">
-                <i class="plus icon"></i>
+            <div class="icon-box js-add-board">
+                <i class="plus icon js-add-board"></i>
             </div>
         </a>
         <a class="item">
@@ -68,10 +67,10 @@ Already a Trello member<i class="arrow left icon"></i>
 <div class="ui grid container board-header">
     <h3><i class="user outline icon"></i>Your Boards</h3>
 </div>
-        <div class="ui four column doubling stackable grid container js-boards"></div>
+<div class="ui four column doubling stackable grid container js-boards"></div>
         `; 
         return html;
-    }
+    };
 
     return {
         renderLoginPage, 

@@ -7,7 +7,6 @@
     const url = 'https://trello.com';
     const version = '1';
     const storage = window.localStorage;
-    const addBoardBtn = document.querySelector('.js-add-board');
 
     if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
 
@@ -75,13 +74,12 @@
                 window.open(e);
                 tokenModal(getTokenBtn, modalContainer, modal, input);
             });
-        }
-    })
+        };
+    });
 
     makeApiRoute('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
             ajax.GET(data).then((data) => {
-                console.log(data)
                 renderBoard(data).then((data) => {
                 }); 
             });
@@ -95,30 +93,32 @@
             makeApiRoute('member', 'me', 'boards').then((boards) => {
                 ajax.GET(boards).then((boards) => {
                     boards.forEach((boardName) => {
-                        const boardContainer = document.querySelector('.js-boards');
-                        const div = makeEl('div');
-                        const list = makeEl('ul');
-                        const listItem = makeEl('li');
-                        const boardTile = makeEl('a');
-                        const boardTileFade = makeEl('span');
-                        const boardTileFadeDetails = makeEl('span');
-                        div.classList.add('column');
-                        list.classList.add('board-list');
-                        listItem.classList.add('board-list-item');
-                        boardTile.classList.add('board-tile');
-                        boardTileFade.classList.add('board-tile-fade');
-                        boardTileFadeDetails.classList.add('board-tile-fade-details');
-                        boardContainer.appendChild(div);
-                        div.appendChild(list);
-                        list.appendChild(listItem);
-                        listItem.appendChild(boardTile);
-                        boardTile.appendChild(boardTileFade);
-                        boardTile.appendChild(boardTileFadeDetails);
-                        boardTileFadeDetails.innerHTML = `<span>${boardName.name}</span>`;
+                        if ( /trelloTODO\d+/g.test(boardName.name) ) {
+                            const boardContainer = document.querySelector('.js-boards');
+                            const div = makeEl('div');
+                            const list = makeEl('ul');
+                            const listItem = makeEl('li');
+                            const boardTile = makeEl('a');
+                            const boardTileFade = makeEl('span');
+                            const boardTileFadeDetails = makeEl('span');
+                            div.classList.add('column');
+                            list.classList.add('board-list');
+                            listItem.classList.add('board-list-item');
+                            boardTile.classList.add('board-tile');
+                            boardTileFade.classList.add('board-tile-fade');
+                            boardTileFadeDetails.classList.add('board-tile-fade-details');
+                            boardContainer.appendChild(div);
+                            div.appendChild(list);
+                            list.appendChild(listItem);
+                            listItem.appendChild(boardTile);
+                            boardTile.appendChild(boardTileFade);
+                            boardTile.appendChild(boardTileFadeDetails);
+                            boardTileFadeDetails.innerHTML = `<span>${boardName.name}</span>`;
+                        }
                     });
                 });
             });
-        }); 
+        });
     };
 
     const displayMember = (userObj) => {
@@ -206,15 +206,34 @@
         });
     };
 
-    // addBoardBtn.addEventListener('click', (e) => { 
-    //     makeBoardData('trelloTODO4').then((data) => {
-    //         makeBoard(data).then((newBoard) => {
-    //             ajax.POST(newBoard).then((newBoard) => {
-    //                 console.log(newBoard); 
-    //             }); 
-    //         });
-    //     });
-    // });
+    document.querySelector('#app').addEventListener('click', event => {
+        if (event.target.classList.contains('js-add-board')) {
+            const addBoardBtn = document.querySelector('.js-add-board');
+            addBoardBtn.addEventListener('click', (e) => { 
+                makeBoardData('trelloTODO5').then((data) => {
+                    makeBoard(data).then((newBoard) => {
+                        ajax.POST(newBoard).then((newBoard) => {
+                            console.log(newBoard); 
+                        });
+                    });
+                });
+            });
+        };
+    });
+/*
+    makeApiRoute('member', 'me', 'boards').then((boards) =>{
+        ajax.GET(boards).then((boards) => {
+            console.log(boards) 
+            boards.forEach((boardName) => {
+                if (!boardName.name.match(/^trelloTODO*\d+/i)) {
+                    return 
+                }
+                else {
+                    console.log(boardName.name.match(/^trelloTODO*\d+/i))
+                }
+            });
+        });
+    });*/
 
     // makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
     //     makeCard(data).then((card) => {
