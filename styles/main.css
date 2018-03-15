@@ -81,15 +81,10 @@
     padding: 0;
 }
 
-.board-list-item {
-    box-sizing: border-box;
-}
-
 .board-tile {
     background-color: rgb(0, 121, 191);
     background-size: cover;
     color: #fff;
-    line-height: 20px;
     padding: 8px;
     text-decoration: none;
     border-radius: 3px;
@@ -104,16 +99,8 @@
     cursor: pointer;
 }
 
-.board-tile-fade {
-    display: block;
-    background-color: rgba(0,0,0,.15);
-}
+.board-name {
 
-.board-tile-details {
-    display: block;
-    min-height: 64px;
-    padding-bottom: 16px;
-    padding-right: 40px;
 }
 
 .member {

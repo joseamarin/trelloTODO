@@ -74,7 +74,7 @@ Already a Trello member<i class="arrow left icon"></i>
 
     return {
         renderLoginPage, 
-        renderBoardsPage, 
+        renderBoardsPage 
     };
      
 })();

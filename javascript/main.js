@@ -80,8 +80,16 @@
     makeApiRoute('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
             ajax.GET(data).then((data) => {
-                renderBoard(data).then((data) => {
-                }); 
+                console.log(data);
+                const obj = data.map((i) => {
+                    return [i.name, i.id];
+                }).reduce(function(acc, cur, i) {
+                    acc[i] = cur;
+                    return acc;
+                }, {});
+                console.log(obj)
+                storage.setItem(obj[0][0], obj[0][1])
+                renderBoard(data); 
             });
         };
     });
@@ -89,40 +97,31 @@
     const makeEl = elName => { return document.createElement(elName) };
 
     const renderBoard = () => {
-        return new Promise((resolve, reject) => {
-            makeApiRoute('member', 'me', 'boards').then((boards) => {
-                ajax.GET(boards).then((boards) => {
-                    boards.forEach((boardName) => {
-                        if ( /trelloTODO\d+/g.test(boardName.name) ) {
-                            const boardContainer = document.querySelector('.js-boards');
-                            const div = makeEl('div');
-                            const list = makeEl('ul');
-                            const listItem = makeEl('li');
-                            const boardTile = makeEl('a');
-                            const boardTileFade = makeEl('span');
-                            const boardTileFadeDetails = makeEl('span');
-                            div.classList.add('column');
-                            list.classList.add('board-list');
-                            listItem.classList.add('board-list-item');
-                            boardTile.classList.add('board-tile');
-                            boardTileFade.classList.add('board-tile-fade');
-                            boardTileFadeDetails.classList.add('board-tile-fade-details');
-                            boardContainer.appendChild(div);
-                            div.appendChild(list);
-                            list.appendChild(listItem);
-                            listItem.appendChild(boardTile);
-                            boardTile.appendChild(boardTileFade);
-                            boardTile.appendChild(boardTileFadeDetails);
-                            boardTileFadeDetails.innerHTML = `<span>${boardName.name}</span>`;
-                        };
-                    });
+        makeApiRoute('member', 'me', 'boards').then((boards) => {
+            ajax.GET(boards).then((boards) => {
+                boards.forEach((boardName) => {
+                    if ( /trelloTODO\d+/g.test(boardName.name) ) {
+                        const boardContainer = document.querySelector('.js-boards');
+                        const div = makeEl('div');
+                        const list = makeEl('ul');
+                        const listItem = makeEl('li');
+                        const boardTile = makeEl('a');
+                        div.classList.add('column');
+                        list.classList.add('board-list');
+                        listItem.classList.add('board-list-item');
+                        boardTile.classList.add('board-tile');
+                        boardContainer.appendChild(div);
+                        div.appendChild(list);
+                        list.appendChild(listItem);
+                        listItem.appendChild(boardTile);
+                        boardTile.innerHTML = `<span class="board-name">${boardName.name}</span>`;
+                    };
                 });
             });
         });
     };
 
     const displayMember = (userObj) => {
-        return new Promise((resolve, reject) => {
             const header = document.querySelector('.js-header');  
             const anchor = makeEl('a');
             const member = makeEl('span'); 
@@ -132,16 +131,11 @@
             anchor.appendChild(member);
             anchor.setAttribute('title', `${userObj.fullName} ${(userObj.username)}`);
             member.innerHTML = `<span class="member-initials">${userObj.initials}</span>`;
-        });
     };
 
     makeApiRoute('member', 'me').then((userData) => {
         ajax.GET(userData).then((userData) => {
-            console.log(userData)
-            displayMember(userData).then((userData) => {
-            }).catch((e) => {
-                console.log(e) 
-            });
+            displayMember(userData);
         });
     });
 
