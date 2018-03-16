@@ -1,0 +1,22 @@
+{
+  "name": "trellotodo",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodejs node_modules/jasmine-node/bin/jasmine-node spec/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/admchin/trelloTODO.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/admchin/trelloTODO/issues"
+  },
+  "homepage": "https://github.com/admchin/trelloTODO#readme",
+  "dependencies": {
+    "jasmine-node": "^1.14.5"
+  }
+}
