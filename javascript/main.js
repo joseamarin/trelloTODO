@@ -10,6 +10,13 @@
 
     if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
 
+    /**
+     * TrelloAPI is a refactoring of makeApiRoute
+     */
+    const container = require( '../app/core/trelloTODOContainer' );
+    const trelloApi = container.makeTrelloApi();
+    const token = storage.getItem('trello_token');
+
     const makeApiRoute = (...args) => {
         return new Promise((resolve, reject) => {
             let endpoint = '';
@@ -22,7 +29,7 @@
                 const responseType = 'token';
                 const scope = 'read,write';
                 const expiration = 'never';
-                route = `${url}/${version}${endpoint}?expiration=${expiration}&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;   
+                route = `${url}/${version}${endpoint}?expiration=${expiration}&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;
                 ajax.GET(route).then((endpoint) => {
                 });
             };
@@ -42,10 +49,10 @@
             if (e.keyCode ===  27) {
                 modalContainer.classList.remove('ui', 'dimmer', 'modals', 'page', 'transition', 'visible', 'active');
                 modal.classList.remove('active');
-            }; 
+            };
         });
         input.addEventListener('keydown', (e) => {
-            if (e.keyCode === 13) validateToken(modalContainer, modal, input);  
+            if (e.keyCode === 13) validateToken(modalContainer, modal, input);
         });
     };
 
@@ -69,9 +76,11 @@
             const modal = document.querySelector('.ui.modal');
             const input = document.querySelector('.js-token-input');
             input.value = '';
-            makeApiRoute('authorize').then((e) => {
+            //makeApiRoute('authorize').then((e) => {
+
+            trelloApi.authenticate( key , token ).then( function ( redirect ){
                 alert('A new tab will open, copy the access token then paste it here');
-                window.open(e);
+                window.open( redirect );
                 tokenModal(getTokenBtn, modalContainer, modal, input);
             });
         };
@@ -89,7 +98,7 @@
                 }, {});
                 console.log(obj)
                 storage.setItem(obj[0][0], obj[0][1])
-                renderBoard(data); 
+                renderBoard(data);
             });
         };
     });
@@ -122,9 +131,9 @@
     };
 
     const displayMember = (userObj) => {
-            const header = document.querySelector('.js-header');  
+            const header = document.querySelector('.js-header');
             const anchor = makeEl('a');
-            const member = makeEl('span'); 
+            const member = makeEl('span');
             anchor.classList.add('item');
             member.classList.add('member');
             header.appendChild(anchor);
@@ -139,7 +148,7 @@
         });
     });
 
-    //  TODO add replace functionality for url ASCII symbols e.g. : // 
+    //  TODO add replace functionality for url ASCII symbols e.g. : //
     const makePostData = (name, idList, desc, pos, due, url, keepFromSource = 'all') => {
         return new Promise((resolve, reject) => {
             if (!name || !idList) throw new Error('This is a required parameter!');
@@ -154,7 +163,7 @@
             };
             for (prop in card) {
                 if (typeof card[prop] === 'undefined') delete card[prop];
-                if (!card[prop]) break; 
+                if (!card[prop]) break;
                 card[prop] = card[prop].replace(/ /g, '%20');
             };
             resolve(card);
@@ -178,10 +187,10 @@
     const makeBoardData = (name, prefs_background = 'red') => {
         return new Promise((resolve, reject) => {
             if (!name) throw new Error('This is a required parameter!');
-            const board = { name, prefs_background }; 
+            const board = { name, prefs_background };
             for (prop in board) {
                 if (typeof board[prop] === 'undefined') delete board[prop];
-                if (!board[prop]) break; 
+                if (!board[prop]) break;
                 board[prop] = board[prop].replace(/ /g, '%20');
             };
             resolve(board);
@@ -247,7 +256,7 @@
                 makeApiRoute('boards', boards[i].id).then((deletedBoardRoute) => {
                     console.log(deletedBoardRoute)
                     ajax.DELETE(deletedBoardRoute).then((deletedBoard) => {
-                        console.log(deletedBoard); 
+                        console.log(deletedBoard);
                     });
                 });
             }
@@ -260,7 +269,7 @@
             ajax.POST(card).then((card) => {
             }).catch((e) => {
                 console.log(e);
-            }); 
+            });
         });
     });
 */
