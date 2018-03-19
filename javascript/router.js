@@ -10,14 +10,17 @@ window.router = (function() {
 
         const route = locationHash.toLowerCase();
 
+/*
         if (!window.localStorage.getItem('trello_token')) {
             location.hash = '#/login';
-            Main.innerHTML = views.renderLoginPage(); 
+            Main.innerHTML = views.renderLoginPage();
         }
         else if (window.localStorage.getItem('trello_token')) {
+            */
             location.hash = '#/boards';
             Main.innerHTML = views.renderBoardsPage();
-        }
+
+        //}
 
     }, false);
 
