@@ -12,7 +12,8 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
         this.version = '1';
 
         this.authEndpoint = '/authorize';
-        this.boardEndpoint = '/member/me/boards';
+        this.userEndpoint = '/member/me';
+        this.boardEndpoint = this.userEndpoint + '/boards';
 
         this.key;
         this.token;
@@ -29,6 +30,13 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
         "getBoards" : function () {
             return this.ajax.get(
                 this.getBoardUrl()
+                + '?'
+                + this.getCredentialQueryString()
+            );
+        } ,
+        "getUserDetails" : function () {
+            return this.ajax.get(
+                this.getUserUrl()
                 + '?'
                 + this.getCredentialQueryString()
             );
@@ -65,11 +73,14 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
 
             return this.helper.buildHttpQuery( fields );
         } ,
+        "getApiUrl" : function () {
+            return this.protocol + this.apiUrl + this.version;
+        } ,
         "getBoardUrl" : function () {
-            return this.protocol
-                + this.apiUrl
-                + this.version
-                + this.boardEndpoint;
+            return this.getApiUrl() + this.boardEndpoint;
+        },
+        "getUserUrl" : function () {
+            return this.getApiUrl() + this.userEndpoint;
         }
     };
 
