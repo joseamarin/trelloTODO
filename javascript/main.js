@@ -1,8 +1,7 @@
 /* CURRENTLY IN: javascript/main.js */
 
-(function() {
-
-    const key = 'XXXXXXXXXXXXXXXXXXXXXXXXXX';
+requirejs( [ 'app/core/trelloTODOContainer' , 'AjaxClient' ] , function( container , ajax ) {
+    const key = 'X';
     const baseURL = 'https://api.trello.com';
     const url = 'https://trello.com';
     const version = '1';
@@ -13,7 +12,6 @@
     /**
      * TrelloAPI is a refactoring of makeApiRoute
      */
-    const container = require( '../app/core/trelloTODOContainer' );
     const trelloApi = container.makeTrelloApi();
     const token = storage.getItem('trello_token');
 
@@ -30,7 +28,7 @@
                 const scope = 'read,write';
                 const expiration = 'never';
                 route = `${url}/${version}${endpoint}?expiration=${expiration}&name=${name}&response_type=${responseType}&scope=${scope}&key=${key}`;
-                ajax.GET(route).then((endpoint) => {
+                ajax.get(route).then((endpoint) => {
                 });
             };
             resolve(route);
@@ -88,7 +86,7 @@
 
     makeApiRoute('members', 'me', 'boards').then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
-            ajax.GET(data).then((data) => {
+            ajax.get(data).then((data) => {
                 console.log(data);
                 const obj = data.map((i) => {
                     return [i.name, i.id];
@@ -107,7 +105,7 @@
 
     const renderBoard = () => {
         makeApiRoute('member', 'me', 'boards').then((boards) => {
-            ajax.GET(boards).then((boards) => {
+            ajax.get(boards).then((boards) => {
                 boards.forEach((boardName) => {
                     if ( /trelloTODO\d+/g.test(boardName.name) ) {
                         const boardContainer = document.querySelector('.js-boards');
@@ -143,7 +141,7 @@
     };
 
     makeApiRoute('member', 'me').then((userData) => {
-        ajax.GET(userData).then((userData) => {
+        ajax.get(userData).then((userData) => {
             displayMember(userData);
         });
     });
@@ -215,11 +213,11 @@
         if (event.target.classList.contains('js-add-board')) {
             const addBoardBtn = document.querySelector('.js-add-board');
             makeApiRoute('member', 'me', 'boards').then((route) =>{
-                ajax.GET(route).then((boards) => {
+                ajax.get(route).then((boards) => {
                     if (boards.length === 0) {
                         makeBoardData('trelloTODO1').then((data) => {
                             makeBoard(data).then((newBoard) => {
-                                ajax.POST(newBoard).then((newBoard) => {
+                                ajax.post(newBoard).then((newBoard) => {
                                     location.reload(); // temp should add eventListener to watch then re-render just the cards or make one more card element
                                 });
                             });
@@ -239,7 +237,7 @@
                     }
                     makeBoardData(newTODO).then((data) => {
                         makeBoard(data).then((newBoard) => {
-                            ajax.POST(newBoard).then((newBoard) => {
+                            ajax.post(newBoard).then((newBoard) => {
                                 location.reload(); // temp should add eventListener to watch then re-render just the cards or make one more card element
                             });
                         });
@@ -251,7 +249,7 @@
 /*
     // delete all boards
     makeApiRoute('members', 'me', 'boards').then((route) => {
-        ajax.GET(route).then((boards) => {
+        ajax.get(route).then((boards) => {
             for (let i = 0; i < boards.length; i++) {
                 makeApiRoute('boards', boards[i].id).then((deletedBoardRoute) => {
                     console.log(deletedBoardRoute)
@@ -266,7 +264,7 @@
 /*
     makePostData('testing function call to make a card', listId, 'card description goes here', 'bottom', '2018-02-09').then((data) => {
         makeCard(data).then((card) => {
-            ajax.POST(card).then((card) => {
+            ajax.post(card).then((card) => {
             }).catch((e) => {
                 console.log(e);
             });
