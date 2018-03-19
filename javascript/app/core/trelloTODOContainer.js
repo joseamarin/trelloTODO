@@ -1,5 +1,4 @@
-'use strict'
-;(function () {
+define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
     /**
      * Trello API Client
      */
@@ -11,14 +10,18 @@
     TrelloAPI.prototype = {
         "authenticate" : function ( key , token ) {
             return this.ajax.get(
+                this.getAuthUrl() ,
                 this.getAuthQueryString( key , token )
             );
         } ,
-        "getAuthQueryString" : function ( key , token ) {
+        "getAuthUrl" : function () {
             const url = 'https://trello.com/';
             const version = '1';
             const endpoint = '/authorize';
 
+            return url + version + endpoint;
+        } ,
+        "getAuthQueryString" : function ( key , token ) {
             const fields = {
                 expiration : 'never' ,
                 name : 'trelloTodo' ,
@@ -38,9 +41,6 @@
     var trelloApiInstance;
 
     function createSingletonTrelloApiInstance () {
-        const ajaxClient = require( '../../javascript/AjaxClient' );
-        const helper = require( '../../javascript/Helper' );
-
         trelloApiInstance = new TrelloAPI( ajaxClient , helper );
 
         return trelloApiInstance;
@@ -61,5 +61,5 @@
         "makeTrelloApi" : makeTrelloApi
     };
 
-    module.exports = trelloTODOContainer;
-})();
+    return trelloTODOContainer;
+});
