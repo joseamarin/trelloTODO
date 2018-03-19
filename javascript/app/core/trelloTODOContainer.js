@@ -10,8 +10,9 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
     TrelloAPI.prototype = {
         "authenticate" : function ( key , token ) {
             return this.ajax.get(
-                this.getAuthUrl() ,
-                this.getAuthQueryString( key , token )
+                this.getAuthUrl()
+                + '?'
+                + this.getAuthQueryString( key , token )
             );
         } ,
         "getAuthUrl" : function () {
