@@ -1,20 +1,20 @@
 /* CURRENTLY IN: javascript/main.js */
 
 requirejs( [ 'app/core/trelloTODOContainer' , 'AjaxClient' ] , function( container , ajax ) {
-    const key = 'X';
-    const baseURL = 'https://api.trello.com';
-    const url = 'https://trello.com';
-    const version = '1';
     const storage = window.localStorage;
 
-    if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
+    //if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
 
     /**
      * TrelloAPI is a refactoring of makeApiRoute
      */
-    const trelloApi = container.makeTrelloApi();
-    const token = storage.getItem('trello_token');
+    const trelloApi = container.makeTrelloApi(
+        '#KEY#' ,
+        '#TOKEN#'
+    );
 
+const makeApiRoute = function(){};
+/*
     const makeApiRoute = (...args) => {
         return new Promise((resolve, reject) => {
             let endpoint = '';
@@ -34,7 +34,7 @@ requirejs( [ 'app/core/trelloTODOContainer' , 'AjaxClient' ] , function( contain
             resolve(route);
         });
     };
-
+*/
     const tokenModal = (getTokenBtn, modalContainer, modal, input) => {
         getTokenBtn.addEventListener('click', () => {
             modal.classList.add('ui', 'modal');
@@ -78,13 +78,14 @@ requirejs( [ 'app/core/trelloTODOContainer' , 'AjaxClient' ] , function( contain
 
             trelloApi.authenticate( key , token ).then( function ( redirect ){
                 alert('A new tab will open, copy the access token then paste it here');
+                console.log( redirect );
                 window.open( redirect );
                 tokenModal(getTokenBtn, modalContainer, modal, input);
             });
         };
     });
 
-    makeApiRoute('members', 'me', 'boards').then((data) => {
+    trelloApi.getBoards().then((data) => {
         if ('localStorage' in window && window['localStorage'] !== null) {
             ajax.get(data).then((data) => {
                 console.log(data);

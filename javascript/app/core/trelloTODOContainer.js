@@ -5,34 +5,71 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
     function TrelloAPI ( ajax , helper ) {
         this.ajax = ajax;
         this.helper = helper;
+
+        this.protocol = 'https://';
+        this.authUrl = 'trello.com/';
+        this.apiUrl = 'api.trello.com/';
+        this.version = '1';
+
+        this.authEndpoint = '/authorize';
+        this.boardEndpoint = '/member/me/boards';
+
+        this.key;
+        this.token;
     }
 
     TrelloAPI.prototype = {
-        "authenticate" : function ( key , token ) {
+        "authenticate" : function () {
             return this.ajax.get(
                 this.getAuthUrl()
                 + '?'
-                + this.getAuthQueryString( key , token )
+                + this.getAuthQueryString()
             );
         } ,
-        "getAuthUrl" : function () {
-            const url = 'https://trello.com/';
-            const version = '1';
-            const endpoint = '/authorize';
-
-            return url + version + endpoint;
+        "getBoards" : function () {
+            return this.ajax.get(
+                this.getBoardUrl()
+                + '?'
+                + this.getCredentialQueryString()
+            );
         } ,
-        "getAuthQueryString" : function ( key , token ) {
+        "setKey" : function ( key ) {
+            this.key = key;
+        } ,
+        "setToken" : function ( token ) {
+            this.token = token;
+        } ,
+        "getAuthUrl" : function () {
+            return this.protocol
+                + this.authUrl
+                + this.version
+                + this.authEndpoint;
+        } ,
+        "getAuthQueryString" : function () {
             const fields = {
                 expiration : 'never' ,
                 name : 'trelloTodo' ,
                 response_type : 'token' ,
                 scope : 'read,write' ,
-                key : key ,
-                token : token
+                key : this.key ,
+                token : this.token
             };
 
             return this.helper.buildHttpQuery( fields );
+        } ,
+        "getCredentialQueryString" : function () {
+            const fields = {
+                key : this.key ,
+                token : this.token
+            };
+
+            return this.helper.buildHttpQuery( fields );
+        } ,
+        "getBoardUrl" : function () {
+            return this.protocol
+                + this.apiUrl
+                + this.version
+                + this.boardEndpoint;
         }
     };
 
@@ -41,15 +78,17 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
      */
     var trelloApiInstance;
 
-    function createSingletonTrelloApiInstance () {
+    function createSingletonTrelloApiInstance ( key , token ) {
         trelloApiInstance = new TrelloAPI( ajaxClient , helper );
+        trelloApiInstance.setKey( key );
+        trelloApiInstance.setToken( token );
 
         return trelloApiInstance;
     }
 
-    function makeTrelloApi () {
+    function makeTrelloApi ( key , token ) {
         if ( !trelloApiInstance ) {
-            return createSingletonTrelloApiInstance();
+            return createSingletonTrelloApiInstance( key , token );
         }
 
         return trelloApiInstance;
