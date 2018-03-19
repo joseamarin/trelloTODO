@@ -1,17 +1,12 @@
 /* CURRENTLY IN: javascript/main.js */
 
-requirejs( [ 'app/core/trelloTODOContainer' , 'AjaxClient' ] , function( container , ajax ) {
+requirejs( [ 'app/TrelloAPI' , 'AjaxClient' ] , function( trelloApi , ajax ) {
     const storage = window.localStorage;
 
     //if (!storage.getItem('trello_token') || location.hash === '#/boards') location.hash = '#/login';
 
-    /**
-     * TrelloAPI is a refactoring of makeApiRoute
-     */
-    const trelloApi = container.makeTrelloApi(
-        '#KEY#' ,
-        '#TOKEN#'
-    );
+    trelloApi.setKey( '#KEY#' );
+    trelloApi.setToken( '#TOKEN#' );
 
 const makeApiRoute = function(){};
 /*
@@ -85,18 +80,16 @@ const makeApiRoute = function(){};
     });
 
     trelloApi.getBoards().then((data) => {
-        ajax.get(data).then((data) => {
-            console.log(data);
-            const obj = data.map((i) => {
-                return [i.name, i.id];
-            }).reduce(function(acc, cur, i) {
-                acc[i] = cur;
-                return acc;
-            }, {});
-            console.log(obj)
-            storage.setItem(obj[0][0], obj[0][1])
-            renderBoard(data);
-        });
+        console.log(data);
+        const obj = data.map((i) => {
+            return [i.name, i.id];
+        }).reduce(function(acc, cur, i) {
+            acc[i] = cur;
+            return acc;
+        }, {});
+        console.log(obj)
+        storage.setItem(obj[0][0], obj[0][1])
+        renderBoard(data);
     });
 
     const makeEl = elName => { return document.createElement(elName) };

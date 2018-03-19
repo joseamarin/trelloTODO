@@ -1,7 +1,4 @@
-define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
-    /**
-     * Trello API Client
-     */
+define( [ 'AjaxClient' , 'app/core/Helper' ] , function ( ajax , helper ) {
     function TrelloAPI ( ajax , helper ) {
         this.ajax = ajax;
         this.helper = helper;
@@ -84,33 +81,5 @@ define( [ 'AjaxClient' , 'app/core/Helper'] , function ( ajaxClient , helper ) {
         }
     };
 
-    /**
-     * Trello API Singleton Factory
-     */
-    var trelloApiInstance;
-
-    function createSingletonTrelloApiInstance ( key , token ) {
-        trelloApiInstance = new TrelloAPI( ajaxClient , helper );
-        trelloApiInstance.setKey( key );
-        trelloApiInstance.setToken( token );
-
-        return trelloApiInstance;
-    }
-
-    function makeTrelloApi ( key , token ) {
-        if ( !trelloApiInstance ) {
-            return createSingletonTrelloApiInstance( key , token );
-        }
-
-        return trelloApiInstance;
-    }
-
-    /**
-     * trelloTODOContainer Public Interface
-     */
-    const trelloTODOContainer =  {
-        "makeTrelloApi" : makeTrelloApi
-    };
-
-    return trelloTODOContainer;
-});
+    return new TrelloAPI( ajax , helper );
+} );
